@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="AI Reels Agent - Create multilingual Instagram Reels automatically"
+    >
+
+    <title>AI Reels Agent</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        AI Reels
+    </div>
+
+    <nav>
+
+        <a href="#features">
+            Features
+        </a>
+
+        <a href="#languages">
+            Languages
+        </a>
+
+        <a href="#pricing">
+            Pricing
+        </a>
+
+        <button
+            class="login-btn"
+            id="loginButton"
+        >
+            Login
+        </button>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+<!-- HERO -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="badge">
+            AI-powered multilingual Reels
+        </span>
+
+        <h1>
+            Turn one video into
+            <span>viral-ready Reels.</span>
+        </h1>
+
+        <p>
+
+            Upload your video and let AI create the hook,
+            captions, voice, music, translation and
+            Instagram-ready Reel.
+
+        </p>
+
+        <div class="hero-languages">
+
+            <span>🇮🇳 Telugu</span>
+            <span>🇮🇳 Tamil</span>
+            <span>🇮🇳 Hindi</span>
+            <span>🇬🇧 English</span>
+
+        </div>
+
+        <button
+            class="primary-btn"
+            onclick="scrollToCreator()"
+        >
+            Create My Reel →
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- CREATOR -->
+
+<section
+    class="creator-section"
+    id="creator"
+>
+
+<div class="creator-container">
+
+    <div class="creator-header">
+
+        <h2>
+            Create your Reel
+        </h2>
+
+        <p>
+            Upload → AI analyzes → Edit → Preview
+        </p>
+
+    </div>
+
+
+    <!-- UPLOAD -->
+
+    <div class="upload-card">
+
+        <div
+            class="drop-zone"
+            id="dropZone"
+        >
+
+            <input
+                type="file"
+                id="videoInput"
+                accept="video/mp4,video/mov,video/webm"
+                hidden
+            >
+
+            <div class="upload-icon">
+                🎥
+            </div>
+
+            <h3>
+                Upload your video
+            </h3>
+
+            <p>
+                Drag & drop your video here
+            </p>
+
+            <button
+                class="secondary-btn"
+                id="chooseVideo"
+            >
+                Choose Video
+            </button>
+
+            <small>
+                MP4, MOV or WebM
+            </small>
+
+        </div>
+
+
+        <!-- VIDEO INFO -->
+
+        <div
+            class="video-info hidden"
+            id="videoInfo"
+        >
+
+            <video
+                id="videoPreview"
+                controls
+            ></video>
+
+            <div class="video-details">
+
+                <div>
+                    <strong>
+                        File
+                    </strong>
+
+                    <span id="fileName">
+                    </span>
+                </div>
+
+                <div>
+                    <strong>
+                        Size
+                    </strong>
+
+                    <span id="fileSize">
+                    </span>
+                </div>
+
+                <div>
+                    <strong>
+                        Duration
+                    </strong>
+
+                    <span id="videoDuration">
+                    </span>
+                </div>
+
+                <div>
+                    <strong>
+                        Resolution
+                    </strong>
+
+                    <span id="videoResolution">
+                    </span>
+                </div>
+
+            </div>
+
+            <button
+                class="change-video"
+                id="changeVideo"
+            >
+                Change Video
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- SETTINGS -->
+
+    <div class="settings-card">
+
+        <h3>
+            AI Settings
+        </h3>
+
+
+        <div class="settings-grid">
+
+
+            <!-- SOURCE LANGUAGE -->
+
+            <div class="setting">
+
+                <label>
+                    Original Language
+                </label>
+
+                <select
+                    id="sourceLanguage"
+                >
+
+                    <option value="auto">
+                        🤖 Auto Detect
+                    </option>
+
+                    <option value="te">
+                        🇮🇳 Telugu
+                    </option>
+
+                    <option value="ta">
+                        🇮🇳 Tamil
+                    </option>
+
+                    <option value="hi">
+                        🇮🇳 Hindi
+                    </option>
+
+                    <option value="en">
+                        🇬🇧 English
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- OUTPUT -->
+
+            <div class="setting">
+
+                <label>
+                    Create Reel In
+                </label>
+
+                <select
+                    id="targetLanguage"
+                >
+
+                    <option value="te">
+                        🇮🇳 Telugu
+                    </option>
+
+                    <option value="ta">
+                        🇮🇳 Tamil
+                    </option>
+
+                    <option value="hi">
+                        🇮🇳 Hindi
+                    </option>
+
+                    <option value="en">
+                        🇬🇧 English
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- EDITING -->
+
+            <div class="setting">
+
+                <label>
+                    Editing Mode
+                </label>
+
+                <select id="editingMode">
+
+                    <option value="smart">
+                        ⭐ Smart
+                    </option>
+
+                    <option value="preserve">
+                        Original / Preserve
+                    </option>
+
+                    <option value="creative">
+                        🔥 Creative
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- DURATION -->
+
+            <div class="setting">
+
+                <label>
+                    Reel Duration
+                </label>
+
+                <select id="reelDuration">
+
+                    <option value="auto">
+                        🤖 Auto
+                    </option>
+
+                    <option value="15">
+                        15 seconds
+                    </option>
+
+                    <option value="30">
+                        30 seconds
+                    </option>
+
+                    <option value="45">
+                        45 seconds
+                    </option>
+
+                    <option value="60">
+                        60 seconds
+                    </option>
+
+                    <option value="90">
+                        90 seconds
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEATURES -->
+
+        <h3 class="sub-heading">
+            AI Features
+        </h3>
+
+        <div class="feature-grid">
+
+
+            <label class="feature-option">
+
+                <input
+                    type="checkbox"
+                    id="automaticHook"
+                    checked
+                >
+
+                <span>
+                    🪝
+                </span>
+
+                <div>
+
+                    <strong>
+                        Automatic Hook
+                    </strong>
+
+                    <small>
+                        Generate strong opening
+                    </small>
+
+                </div>
+
+            </label>
+
+
+            <label class="feature-option">
+
+                <input
+                    type="checkbox"
+                    id="captions"
+                    checked
+                >
+
+                <span>
+                    📝
+                </span>
+
+                <div>
+
+                    <strong>
+                        Auto Captions
+                    </strong>
+
+                    <small>
+                        Animated subtitles
+                    </small>
+
+                </div>
+
+            </label>
+
+
+            <label class="feature-option">
+
+                <input
+                    type="checkbox"
+                    id="silenceRemoval"
+                    checked
+                >
+
+                <span>
+                    ✂️
+                </span>
+
+                <div>
+
+                    <strong>
+                        Remove Silence
+                    </strong>
+
+                    <small>
+                        Clean unnecessary pauses
+                    </small>
+
+                </div>
+
+            </label>
+
+
+            <label class="feature-option">
+
+                <input
+                    type="checkbox"
+                    id="smartCrop"
+                    checked
+                >
+
+                <span>
+                    📱
+                </span>
+
+                <div>
+
+                    <strong>
+                        Smart 9:16 Crop
+                    </strong>
+
+                    <small>
+                        Keep subject in frame
+                    </small>
+
+                </div>
+
+            </label>
+
+
+            <label class="feature-option">
+
+                <input
+                    type="checkbox"
+                    id="backgroundMusic"
+                    checked
+                >
+
+                <span>
+                    🎵
+                </span>
+
+                <div>
+
+                    <strong>
+                        Background Music
+                    </strong>
+
+                    <small>
+                        AI-selected music
+                    </small>
+
+                </div>
+
+            </label>
+
+
+            <label class="feature-option">
+
+                <input
+                    type="checkbox"
+                    id="aiCover"
+                    checked
+                >
+
+                <span>
+                    🖼️
+                </span>
+
+                <div>
+
+                    <strong>
+                        AI Cover
+                    </strong>
+
+                    <small>
+                        Generate Reel cover
+                    </small>
+
+                </div>
+
+            </label>
+
+        </div>
+
+
+        <!-- VOICE -->
+
+        <h3 class="sub-heading">
+            Voice
+        </h3>
+
+        <div class="voice-options">
+
+            <label>
+
+                <input
+                    type="radio"
+                    name="voice"
+                    value="original"
+                    checked
+                >
+
+                <span>
+                    🎤
+                </span>
+
+                Original Voice
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="radio"
+                    name="voice"
+                    value="female"
+                >
+
+                <span>
+                    👩
+                </span>
+
+                AI Female
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="radio"
+                    name="voice"
+                    value="male"
+                >
+
+                <span>
+                    👨
+                </span>
+
+                AI Male
+
+            </label>
+
+        </div>
+
+
+        <!-- CREATE -->
+
+        <button
+            class="generate-btn"
+            id="generateButton"
+        >
+
+            ✨ Analyze & Create Reel
+
+        </button>
+
+
+        <!-- PROGRESS -->
+
+        <div
+            class="progress-container hidden"
+            id="progressContainer"
+        >
+
+            <div class="progress-header">
+
+                <span id="progressText">
+                    Preparing...
+                </span>
+
+                <span id="progressPercent">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div
+                    class="progress-fill"
+                    id="progressFill"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- RESULT -->
+
+<section
+    class="result-section hidden"
+    id="resultSection"
+>
+
+<div class="result-container">
+
+    <div class="result-header">
+
+        <div>
+
+            <span class="success-badge">
+                ✓ Reel Ready
+            </span>
+
+            <h2>
+                Your AI Reel
+            </h2>
+
+        </div>
+
+        <button
+            class="secondary-btn"
+            onclick="createAnother()"
+        >
+            + Create Another
+        </button>
+
+    </div>
+
+
+    <div class="result-grid">
+
+
+        <!-- VIDEO -->
+
+        <div class="reel-preview">
+
+            <video
+                id="resultVideo"
+                controls
+                playsinline
+            ></video>
+
+        </div>
+
+
+        <!-- AI DETAILS -->
+
+        <div class="result-details">
+
+            <div class="result-block">
+
+                <h3>
+                    🪝 Selected Hook
+                </h3>
+
+                <div
+                    class="hook-box"
+                    id="selectedHook"
+                ></div>
+
+                <div
+                    class="hook-list"
+                    id="hookList"
+                ></div>
+
+            </div>
+
+
+            <div class="result-block">
+
+                <h3>
+                    ✍️ Caption
+                </h3>
+
+                <p id="resultCaption"></p>
+
+            </div>
+
+
+            <div class="result-block">
+
+                <h3>
+                    #️⃣ Hashtags
+                </h3>
+
+                <div
+                    class="hashtags"
+                    id="hashtags"
+                ></div>
+
+            </div>
+
+
+            <div class="result-actions">
+
+                <button
+                    class="primary-btn"
+                    id="downloadButton"
+                >
+                    Download Reel
+                </button>
+
+                <button
+                    class="instagram-btn"
+                    id="instagramButton"
+                >
+                    📸 Publish to Instagram
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- FEATURES -->
+
+<section
+    class="features-section"
+    id="features"
+>
+
+<div class="section-header">
+
+    <span class="badge">
+        Everything automated
+    </span>
+
+    <h2>
+        From raw video to Reel
+    </h2>
+
+</div>
+
+
+<div class="feature-cards">
+
+
+    <div class="feature-card">
+
+        <div>
+            🪝
+        </div>
+
+        <h3>
+            AI Hooks
+        </h3>
+
+        <p>
+            Generate multiple attention-grabbing
+            hooks based on your actual content.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div>
+            🌐
+        </div>
+
+        <h3>
+            4 Languages
+        </h3>
+
+        <p>
+            Create Telugu, Tamil, Hindi and English
+            versions from the same video.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div>
+            🎙️
+        </div>
+
+        <h3>
+            AI Voice
+        </h3>
+
+        <p>
+            Replace or add narration using
+            natural AI voices.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div>
+            🎵
+        </div>
+
+        <h3>
+            AI Music
+        </h3>
+
+        <p>
+            Automatically select and balance
+            background music.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div>
+            📝
+        </div>
+
+        <h3>
+            Smart Captions
+        </h3>
+
+        <p>
+            Create attractive subtitles automatically.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div>
+            📱
+        </div>
+
+        <h3>
+            9:16 Editing
+        </h3>
+
+        <p>
+            Convert landscape videos into
+            Instagram-ready vertical videos.
+        </p>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- LANGUAGES -->
+
+<section
+    class="languages-section"
+    id="languages"
+>
+
+<h2>
+    Made for Indian creators
+</h2>
+
+<p>
+    Create content in your language.
+</p>
+
+<div class="language-list">
+
+    <span>🇮🇳 Telugu</span>
+    <span>🇮🇳 Tamil</span>
+    <span>🇮🇳 Hindi</span>
+    <span>🇬🇧 English</span>
+
+</div>
+
+</section>
+
+
+<!-- PRICING -->
+
+<section
+    class="pricing-section"
+    id="pricing"
+>
+
+<div class="section-header">
+
+    <span class="badge">
+        Simple pricing
+    </span>
+
+    <h2>
+        Pay for what you create
+    </h2>
+
+</div>
+
+
+<div class="pricing-grid">
+
+
+    <div class="pricing-card">
+
+        <h3>
+            Free
+        </h3>
+
+        <div class="price">
+            ₹0
+        </div>
+
+        <p>
+            Try the AI Reel generator.
+        </p>
+
+        <ul>
+
+            <li>
+                3 Reels/month
+            </li>
+
+            <li>
+                Basic captions
+            </li>
+
+            <li>
+                Watermark
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <div class="pricing-card featured">
+
+        <span class="popular">
+            POPULAR
+        </span>
+
+        <h3>
+            Creator
+        </h3>
+
+        <div class="price">
+            ₹499
+            <small>/month</small>
+        </div>
+
+        <p>
+            For regular creators.
+        </p>
+
+        <ul>
+
+            <li>
+                30 Reel credits
+            </li>
+
+            <li>
+                4 languages
+            </li>
+
+            <li>
+                AI voice
+            </li>
+
+            <li>
+                Music
+            </li>
+
+            <li>
+                No watermark
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <div class="pricing-card">
+
+        <h3>
+            Pro
+        </h3>
+
+        <div class="price">
+            ₹999
+            <small>/month</small>
+        </div>
+
+        <p>
+            For serious creators.
+        </p>
+
+        <ul>
+
+            <li>
+                100 Reel credits
+            </li>
+
+            <li>
+                Multiple languages
+            </li>
+
+            <li>
+                AI voice
+            </li>
+
+            <li>
+                Priority processing
+            </li>
+
+            <li>
+                Analytics
+            </li>
+
+        </ul>
+
+    </div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+    <div class="footer-logo">
+        AI Reels Agent
+    </div>
+
+    <p>
+        Create. Translate. Edit. Publish.
+    </p>
+
+</footer>
+
+
+<script src="js/api.js"></script>
+<script src="js/upload.js"></script>
+<script src="js/editor.js"></script>
+
+</body>
+
+</html>
