@@ -1,7 +1,5 @@
 const generateButton =
-    document.getElementById(
-        "generateButton"
-    );
+    document.getElementById("generateButton");
 
 
 generateButton.addEventListener(
@@ -9,164 +7,233 @@ generateButton.addEventListener(
     async () => {
 
         const file =
-            videoInput.files[0];
-
+            window.videoInput?.files?.[0] ||
+            document.getElementById("videoInput")?.files?.[0];
 
         if (!file) {
-
-            alert(
-                "Please upload a video first."
-            );
-
+            alert("Please upload a video first.");
             return;
-
         }
 
-
-        const status =
-            document.getElementById(
-                "progressText"
-            );
-
-        const progress =
-            document.getElementById(
-                "progressFill"
-            );
-
         const progressBox =
-            document.getElementById(
-                "progressContainer"
-            );
+            document.getElementById("progressContainer");
 
-
-        progressBox.classList.remove(
-            "hidden"
-        );
-
+        if (progressBox) {
+            progressBox.classList.remove("hidden");
+        }
 
         try {
 
+            console.log("Creating Reel...");
+
             updateProgress(
-                "Preparing video...",
+                "Uploading video...",
                 10
             );
 
+            const formData = new FormData();
 
-            /*
-             * STEP 1
-             *
-             * Upload video to
-             * Cloudinary.
-             *
-             * This will be connected
-             * to the backend upload
-             * endpoint.
-             */
+            formData.append("video", file);
 
+            formData.append(
+                "source_language",
+                getSourceLanguage()
+            );
 
-            updateProgress(
-                "Transcribing video...",
-                25
+            formData.append(
+                "target_language",
+                getTargetLanguage()
+            );
+
+            formData.append(
+                "music_mode",
+                getMusicMode()
+            );
+
+            formData.append(
+                "music_volume",
+                getMusicVolume()
             );
 
 
-            /*
-             * STEP 2
-             *
-             * Backend → Groq Whisper
-             */
+            const created =
+                await createReel(formData);
 
 
-            updateProgress(
-                "AI is finding the best moments...",
-                40
+            console.log(
+                "CREATE RESPONSE:",
+                created
             );
 
 
+            if (!created.success) {
+                throw new Error(
+                    created.error ||
+                    "Failed to create Reel"
+                );
+            }
+
+
             /*
-             * STEP 3
+             * Backend returns:
              *
-             * Backend → Gemini
+             * {
+             *   reel_id: "UUID",
+             *   status: "uploaded"
+             * }
              */
 
+            const reelId =
+                created.reel_id;
 
-            updateProgress(
-                "Creating hooks...",
-                55
+
+            if (!reelId) {
+                throw new Error(
+                    "Backend did not return reel_id"
+                );
+            }
+
+
+            console.log(
+                "REEL ID:",
+                reelId
             );
 
 
-            /*
-             * STEP 4
-             *
-             * Hook generation
-             */
-
-
             updateProgress(
-                "Preparing voice and music...",
-                70
+                "Video uploaded. Processing...",
+                35
             );
 
 
-            /*
-             * STEP 5
-             *
-             * Azure TTS + music
-             */
-
-
-            updateProgress(
-                "Rendering your Reel...",
-                85
-            );
-
-
-            /*
-             * STEP 6
-             *
-             * Shotstack / cloud renderer
-             */
-
-
-            updateProgress(
-                "Almost ready...",
-                95
-            );
-
-
-            /*
-             * TEMPORARY RESULT
-             *
-             * Replace this section
-             * after backend integration.
-             */
-
-
-            setTimeout(
-                () => {
-
-                    updateProgress(
-                        "Reel ready!",
-                        100
-                    );
-
-                    showDemoResult();
-
-                },
-                1000
+            await monitorJob(
+                reelId
             );
 
 
         } catch (error) {
 
-            status.textContent =
-                error.message;
+            console.error(
+                "REEL ERROR:",
+                error
+            );
 
+            updateProgress(
+                error.message ||
+                "Reel generation failed",
+                0
+            );
         }
 
     }
 );
+
+
+async function monitorJob(reelId) {
+
+    console.log(
+        "Monitoring Reel:",
+        reelId
+    );
+
+
+    while (true) {
+
+        const job =
+            await getReelStatus(
+                reelId
+            );
+
+
+        console.log(
+            "STATUS:",
+            job
+        );
+
+
+        updateProgress(
+            job.step ||
+            "Processing...",
+            job.progress || 0
+        );
+
+
+        if (
+            job.status ===
+            "completed"
+        ) {
+
+            showResult(job);
+
+            return;
+        }
+
+
+        if (
+            job.status ===
+            "failed"
+        ) {
+
+            throw new Error(
+                job.error ||
+                "Reel generation failed"
+            );
+        }
+
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    5000
+                )
+        );
+    }
+}
+
+
+function getSourceLanguage() {
+
+    const element =
+        document.getElementById(
+            "sourceLanguage"
+        );
+
+    return element?.value || "auto";
+}
+
+
+function getTargetLanguage() {
+
+    const element =
+        document.getElementById(
+            "targetLanguage"
+        );
+
+    return element?.value || "en";
+}
+
+
+function getMusicMode() {
+
+    const element =
+        document.getElementById(
+            "musicMode"
+        );
+
+    return element?.value || "auto";
+}
+
+
+function getMusicVolume() {
+
+    const element =
+        document.getElementById(
+            "musicVolume"
+        );
+
+    return element?.value || "0.20";
+}
 
 
 function updateProgress(
@@ -174,38 +241,50 @@ function updateProgress(
     percentage
 ) {
 
-    document
-        .getElementById(
+    const progressText =
+        document.getElementById(
             "progressText"
-        )
-        .textContent =
-        text;
+        );
 
-
-    document
-        .getElementById(
+    const progressPercent =
+        document.getElementById(
             "progressPercent"
-        )
-        .textContent =
-        `${percentage}%`;
+        );
 
-
-    document
-        .getElementById(
+    const progressFill =
+        document.getElementById(
             "progressFill"
-        )
-        .style.width =
-        `${percentage}%`;
+        );
 
+
+    if (progressText) {
+        progressText.textContent = text;
+    }
+
+
+    if (progressPercent) {
+        progressPercent.textContent =
+            `${percentage}%`;
+    }
+
+
+    if (progressFill) {
+        progressFill.style.width =
+            `${percentage}%`;
+    }
 }
 
 
-function showDemoResult() {
+function showResult(job) {
 
     const section =
         document.getElementById(
             "resultSection"
         );
+
+    if (!section) {
+        return;
+    }
 
 
     section.classList.remove(
@@ -213,57 +292,95 @@ function showDemoResult() {
     );
 
 
-    document
-        .getElementById(
+    const hook =
+        document.getElementById(
             "selectedHook"
-        )
-        .textContent =
-        "Your AI-generated hook will appear here.";
+        );
+
+    if (hook) {
+        hook.textContent =
+            job.hook ||
+            "AI hook generated.";
+    }
 
 
-    document
-        .getElementById(
+    const caption =
+        document.getElementById(
             "resultCaption"
-        )
-        .textContent =
-        "Your AI-generated Instagram caption will appear here.";
+        );
+
+    if (caption) {
+        caption.textContent =
+            job.caption || "";
+    }
 
 
-    document
-        .getElementById(
+    const hashtags =
+        document.getElementById(
             "hashtags"
-        )
-        .innerHTML = `
-            <span>#reels</span>
-            <span>#ai</span>
-            <span>#contentcreator</span>
-        `;
+        );
+
+    if (hashtags) {
+
+        const tags =
+            Array.isArray(job.hashtags)
+                ? job.hashtags
+                : [];
+
+        hashtags.innerHTML =
+            tags
+                .map(
+                    tag =>
+                        `<span>${escapeHtml(tag)}</span>`
+                )
+                .join("");
+    }
+
+
+    const resultVideo =
+        document.getElementById(
+            "resultVideo"
+        );
+
+
+    if (
+        resultVideo &&
+        job.result_url
+    ) {
+
+        resultVideo.src =
+            job.result_url;
+
+        resultVideo.load();
+    }
 
 
     section.scrollIntoView({
         behavior: "smooth"
     });
+}
 
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
 function createAnother() {
 
     document
-        .getElementById(
-            "resultSection"
-        )
-        .classList.add(
-            "hidden"
-        );
-
+        .getElementById("resultSection")
+        ?.classList.add("hidden");
 
     document
-        .getElementById(
-            "creator"
-        )
-        .scrollIntoView({
+        .getElementById("creator")
+        ?.scrollIntoView({
             behavior: "smooth"
         });
-
 }

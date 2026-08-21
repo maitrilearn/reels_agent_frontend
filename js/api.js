@@ -1,86 +1,59 @@
-const API_BASE_URL =
-    "http://localhost:5000/api";
+const API_BASE_URL = "http://localhost:5000/api";
 
-
-async function analyzeReel(data) {
-
+async function createReel(formData) {
     const response = await fetch(
-        `${API_BASE_URL}/analyze`,
+        `${API_BASE_URL}/reels/create`,
         {
             method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(data)
+            body: formData
         }
     );
 
-    if (!response.ok) {
+    const text = await response.text();
 
-        const error =
-            await response.json();
+    let data;
 
+    try {
+        data = JSON.parse(text);
+    } catch (error) {
         throw new Error(
-            error.error ||
-            "AI analysis failed"
+            `Server returned invalid JSON: ${text.substring(0, 200)}`
         );
     }
 
-    return response.json();
+    if (!response.ok) {
+        throw new Error(
+            data.error || "Failed to create Reel"
+        );
+    }
+
+    return data;
 }
 
-
-async function translateContent(data) {
+async function getReelStatus(reelId) {
 
     const response = await fetch(
-        `${API_BASE_URL}/translate`,
-        {
-            method: "POST",
-
-            headers: {
-                "Content-Type":
-                    "application/json"
-            },
-
-            body: JSON.stringify(data)
-        }
+        `${API_BASE_URL}/reels/status/${reelId}`
     );
 
-    if (!response.ok) {
+    const text = await response.text();
 
+    let data;
+
+    try {
+        data = JSON.parse(text);
+    } catch (error) {
         throw new Error(
-            "Translation failed"
+            `Status API returned invalid JSON: ${text.substring(0, 200)}`
         );
     }
 
-    return response.json();
-}
-
-
-async function generateVoice(data) {
-
-    const response = await fetch(
-        `${API_BASE_URL}/tts`,
-        {
-            method: "POST",
-
-            headers: {
-                "Content-Type":
-                    "application/json"
-            },
-
-            body: JSON.stringify(data)
-        }
-    );
-
     if (!response.ok) {
-
         throw new Error(
-            "Voice generation failed"
+            data.error ||
+            "Failed to get Reel status"
         );
     }
 
-    return response.json();
+    return data.data || data.job;
 }
